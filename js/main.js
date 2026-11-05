@@ -51,9 +51,22 @@
       "</svg>";
   }
 
+  var SOCIAL = [
+    ["facebook", "Facebook", '<path fill="currentColor" d="M14 8.5V6.6c0-.9.6-1.1 1-1.1h2.4V2h-3.3C10.5 2 9.7 4.7 9.7 6.4v2.1H7.5V12h2.2v10H14V12h3l.4-3.5H14Z"/>'],
+    ["instagram", "Instagram", '<g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/></g><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/>'],
+    ["tiktok", "TikTok", '<path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>']
+  ];
+  function socialHTML() {
+    return '<ul class="social">' + SOCIAL.map(function (s) {
+      var url = C.social[s[0]];
+      return '<li><a href="' + esc(url || "#") + '"' + (url ? ' target="_blank" rel="noopener"' : " data-no-link") + ' aria-label="FRAGNIVO on ' + s[1] + '" title="' + s[1] + '">' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' + s[2] + "</svg></a></li>";
+    }).join("") + "</ul>";
+  }
+
   /* --- shared header, footer and WhatsApp button ---------------------------- */
   function renderChrome() {
-    var links = '<a href="shop.html">Shop</a><a href="index.html#find">Find your scent</a><a href="guide.html">Scent School</a>' +
+    var links = '<a href="shop.html">Shop</a><a href="index.html#find">Find your scent</a><a href="scent-school.html">Scent School</a>' +
       F.map(function (f) { return '<a class="nav__only-menu" href="' + f.page + '">' + esc(f.name) + "</a>"; }).join("") + '<a class="nav__only-menu nav__contact" href="contact.html">Contact us</a>';
     var head = document.createElement("header");
     head.className = "site-head";
@@ -77,8 +90,8 @@
       '<div class="site-foot__actions"><a class="btn btn--gold" href="shop.html">Shop fragrances</a>' +
       '<a class="btn btn--line" href="contact.html">Contact us</a></div></div>' +
       '<div class="site-foot__mid wrap">' +
-      '<img class="site-foot__logo" src="assets/logo/fragnivo-logo-ivory.svg" alt="FRAGNIVO. Perfumes, Fragrances, Decants">' +
-      '<ul><li><a href="shop.html">Shop all</a></li>' + F.map(function (f) { return '<li><a href="' + f.page + '">' + esc(f.name) + "</a></li>"; }).join("") + '<li><a href="guide.html">Scent School</a></li></ul>' +
+      '<div class="site-foot__brand"><img class="site-foot__logo" src="assets/logo/fragnivo-logo-ivory.svg" alt="FRAGNIVO. Perfumes, Fragrances, Decants">' + socialHTML() + "</div>" +
+      '<ul><li><a href="shop.html">Shop all</a></li>' + F.map(function (f) { return '<li><a href="' + f.page + '">' + esc(f.name) + "</a></li>"; }).join("") + '<li><a href="scent-school.html">Scent School</a></li></ul>' +
       '<ul><li><a href="' + waLink("Hi FRAGNIVO, I have a question.") + '" target="_blank" rel="noopener">WhatsApp</a></li>' +
       '<li><a href="tel:' + esc(C.phoneLink) + '">' + esc(C.phoneDisplay) + '</a></li>' +
       '<li><a href="mailto:' + esc(C.email) + '">' + esc(C.email) + "</a></li></ul></div>" +
@@ -165,7 +178,7 @@
   }
   function renderSeo() {
     var page = body.getAttribute("data-page"), id = body.getAttribute("data-id"), f = byId[id], U = C.siteUrl;
-    var files = { home: "", shop: "shop.html", guide: "guide.html", contact: "contact.html" };
+    var files = { home: "", shop: "shop.html", guide: "scent-school.html", contact: "contact.html" };
     var path = f ? f.page : files[page], url = U + "/" + path, head = document.head;
     var title = {
       home: "FRAGNIVO | Authentic Perfumes & 10 ml Decants in Sri Lanka",
@@ -218,6 +231,8 @@
       return { "@type": "Offer", name: size, sku: "FRAGNIVO-" + p.id + "-" + (size === SIZES.bottle ? "100ml" : "10ml"), url: U + "/" + p.page, price: String(price), priceCurrency: "LKR",
         availability: "https://schema.org/InStock", itemCondition: "https://schema.org/NewCondition", seller: { "@id": U + "/#store" } };
     }
+    var same = SOCIAL.map(function (s) { return C.social[s[0]]; }).filter(Boolean);
+    if (same.length) org.sameAs = same;
     var graph = [org];
     if (page === "home") graph.push({ "@type": "WebSite", "@id": U + "/#website", url: U + "/", name: "FRAGNIVO", inLanguage: "en-LK", publisher: { "@id": U + "/#store" } });
     if (page === "shop") {
@@ -225,7 +240,7 @@
       graph.push({ "@type": "ItemList", name: "FRAGNIVO fragrances", itemListElement: F.map(function (p, i) { return { "@type": "ListItem", position: i + 1, name: p.fullName, url: U + "/" + p.page }; }) });
     }
     if (page === "guide") {
-      graph.push(crumbs([["Home", ""], ["Scent School", "guide.html"]]));
+      graph.push(crumbs([["Home", ""], ["Scent School", "scent-school.html"]]));
       graph.push({ "@type": "Article", headline: "The FRAGNIVO Scent School", description: desc, inLanguage: "en-LK", url: url, image: image, author: { "@id": U + "/#store" }, publisher: { "@id": U + "/#store" } });
       graph.push(faq($$(".lesson").map(function (s) { var p = $("p", s); return [$("h2", s).textContent, p ? p.textContent : ""]; }).filter(function (q) { return q[1]; })));
     }
@@ -285,6 +300,7 @@
       schedule();
     }
     place(); schedule();
+    requestAnimationFrame(function () { requestAnimationFrame(function () { hero.classList.add("is-ready"); }); });
 
     // drag with the mouse or a finger
     var startX = 0, moved = false, pid = null, w = 1, startT = 0;
@@ -607,6 +623,7 @@
       '<li><a target="_blank" rel="noopener" href="' + waLink("Hi FRAGNIVO, I have a question.") + '"><span>WhatsApp</span>Chat with us</a></li>' +
       '<li><a href="tel:' + esc(C.phoneLink) + '"><span>Phone</span>' + esc(C.phoneDisplay) + "</a></li>" +
       '<li><a href="mailto:' + esc(C.email) + '"><span>Email</span>' + esc(C.email) + "</a></li>";
+    if (!$(".contact__social")) ways.insertAdjacentHTML("afterend", '<div class="contact__social"><p>Follow us</p>' + socialHTML() + "</div>");
     var form = $("[data-contact-form]");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -787,6 +804,7 @@
     var b = e.target.closest("[data-order]");
     if (b) { var v = b.getAttribute("data-order").split(":"); addItem(v[0], v[1]); }
     if (e.target.closest("[data-open-order]")) openDrawer();
+    if (e.target.closest("[data-no-link]")) e.preventDefault();
   });
   initThread();
   initMotion();

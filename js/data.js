@@ -13,6 +13,9 @@ var FRAGNIVO_CONFIG = {
   phoneLink: "+94700000000",
   email: "hello@example.com",
 
+  // Paste your full page links between the quotes, for example "https://www.instagram.com/fragnivo"
+  social: { facebook: "", instagram: "", tiktok: "" },
+
   // Free key from web3forms.com. It sends each order to your email inbox.
   // While this is empty, customers are asked to send their order by WhatsApp or email instead.
   emailFormKey: "",

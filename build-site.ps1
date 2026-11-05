@@ -9,7 +9,7 @@ $root = [IO.Path]::GetFullPath($PSScriptRoot)
 $out = Join-Path $root 'docs'
 $chrome = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
 $stamp = Get-Date -Format 'yyyyMMddHHmm'
-$pages = 'index.html', 'shop.html', 'guide.html', 'contact.html', 'hawas-og.html', 'hawas-fire.html', 'rebel.html', 'vulcan-feu.html'
+$pages = 'index.html', 'shop.html', 'scent-school.html', 'contact.html', 'hawas-og.html', 'hawas-fire.html', 'rebel.html', 'vulcan-feu.html'
 
 # 1. Read the web address from data.js
 $data = [IO.File]::ReadAllText((Join-Path $root 'js\data.js'))
@@ -49,11 +49,12 @@ $clean = @'
   document.querySelectorAll('[data-quiz]').forEach(function(n){n.innerHTML=''});
   document.querySelectorAll('.slide').forEach(function(n,i){n.removeAttribute('style');n.removeAttribute('inert');n.classList.toggle('is-on',i===0)});
   document.querySelectorAll('.hero__ticks i').forEach(function(n,i){n.classList.toggle('is-on',i===0)});
-  document.querySelectorAll('[data-hero]').forEach(function(n){n.classList.remove('is-drag')});
+  document.querySelectorAll('[data-hero]').forEach(function(n){n.classList.remove('is-drag','is-ready')});
   if(document.body.dataset.page==='home')document.body.classList.remove('hero-dark');
   document.querySelectorAll('.card[hidden]').forEach(function(n){n.hidden=false});
   ['is-scrolled','head-hidden','has-order','drawer-open','menu-open'].forEach(function(c){document.body.classList.remove(c)});
   if(!document.body.className)document.body.removeAttribute('class');
+  document.querySelectorAll('body > script').forEach(function(n){document.body.appendChild(n)});
   document.documentElement.setAttribute('data-built','');
   document.documentElement.removeAttribute('class');
   return '<!doctype html>\n'+document.documentElement.outerHTML;
